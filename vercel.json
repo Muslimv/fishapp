@@ -1,0 +1,12 @@
+{
+  "routes": [
+    {
+      "src": "/view",
+      "dest": "/view.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ]
+}
